@@ -1,0 +1,74 @@
+<!--pages/gardens/gardens.wxml-->
+<view class="gardens-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 菜园列表 -->
+  <view wx:elif="{{gardens.length > 0}}" class="gardens-list">
+    <view 
+      wx:for="{{gardens}}" 
+      wx:key="id" 
+      class="garden-item"
+      data-garden="{{item}}"
+      bindtap="onGardenItemTap"
+    >
+      <view class="garden-header">
+        <view class="garden-info">
+          <text class="garden-name">{{item.name}}</text>
+          <text class="garden-id">ID: {{item.id}}</text>
+        </view>
+        <view class="garden-status status-{{item.status}}">
+          {{item.status === 'active' ? '正常' : 
+            item.status === 'inactive' ? '离线' : '维护中'}}
+        </view>
+      </view>
+
+      <view class="garden-details">
+        <view class="detail-item">
+          <image class="detail-icon" src="/images/location.png"></image>
+          <text class="detail-text">{{item.location}}</text>
+        </view>
+        <view class="detail-item">
+          <image class="detail-icon" src="/images/area.png"></image>
+          <text class="detail-text">{{item.area}}平方米</text>
+        </view>
+        <view class="detail-item">
+          <image class="detail-icon" src="/images/time.png"></image>
+          <text class="detail-text">绑定于 {{item.bindTime}}</text>
+        </view>
+      </view>
+
+      <view class="garden-actions">
+        <button class="action-btn primary" data-garden="{{item}}" bindtap="onGardenItemTap">
+          <image class="btn-icon" src="/images/monitor.png"></image>
+          <text>实时监控</text>
+        </button>
+        <button class="action-btn secondary" data-garden="{{item}}" bindtap="onUnbindGarden" catchtap="true">
+          <image class="btn-icon" src="/images/unbind.png"></image>
+          <text>解绑</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <image class="empty-image" src="/images/empty-garden.png"></image>
+    <text class="empty-title">还没有绑定菜园</text>
+    <text class="empty-desc">绑定菜园后即可远程监控和管理</text>
+    <button class="bind-btn" bindtap="goToBindGarden">
+      <image class="btn-icon" src="/images/add.png"></image>
+      <text>立即绑定</text>
+    </button>
+  </view>
+
+  <!-- 底部绑定按钮 -->
+  <view wx:if="{{gardens.length > 0}}" class="bottom-actions">
+    <button class="add-garden-btn" bindtap="goToBindGarden">
+      <image class="add-icon" src="/images/add.png"></image>
+      <text>绑定新菜园</text>
+    </button>
+  </view>
+</view>

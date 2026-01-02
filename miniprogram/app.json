@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/profile/profile",
+    "pages/gardens/gardens",
+    "pages/garden-bind/garden-bind",
+    "pages/monitor/monitor",
+    "pages/services/services",
+    "pages/service-book/service-book",
+    "pages/orders/orders",
+    "pages/order-detail/order-detail",
+    "pages/promotion/promotion",
+    "pages/role-select/role-select",
+    "pages/application/application"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4CAF50",
+    "navigationBarTitleText": "智慧共享菜园",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#4CAF50",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/gardens/gardens",
+        "text": "我的菜园",
+        "iconPath": "images/garden.png",
+        "selectedIconPath": "images/garden-active.png"
+      },
+      {
+        "pagePath": "pages/services/services",
+        "text": "服务",
+        "iconPath": "images/service.png",
+        "selectedIconPath": "images/service-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/profile.png",
+        "selectedIconPath": "images/profile-active.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredBackgroundModes": ["audio"],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

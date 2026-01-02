@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "服务预约",
+  "navigationBarBackgroundColor": "#4CAF50",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f5f5",
+  "enablePullDownRefresh": false,
+  "disableScroll": false
+}

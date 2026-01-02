@@ -1,0 +1,128 @@
+<!--pages/order-detail/order-detail.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 订单详情 -->
+  <view wx:elif="{{orderInfo}}" class="content">
+    <!-- 状态卡片 -->
+    <view class="status-card">
+      <view class="status-header">
+        <view class="status-icon {{getStatusClass(orderInfo.status)}}">
+          <text wx:if="{{orderInfo.status === 'pending'}}">⏳</text>
+          <text wx:elif="{{orderInfo.status === 'confirmed'}}">✅</text>
+          <text wx:elif="{{orderInfo.status === 'completed'}}">🎉</text>
+          <text wx:else>❌</text>
+        </view>
+        <view class="status-info">
+          <text class="status-text {{getStatusClass(orderInfo.status)}}">{{getStatusText(orderInfo.status)}}</text>
+          <text class="status-desc">{{getStatusDescription(orderInfo.status)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="info-card">
+      <view class="card-title">订单信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-label">订单编号</text>
+          <text class="info-value">{{orderInfo.orderNo}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">下单时间</text>
+          <text class="info-value">{{formatDateTime(orderInfo.createdAt)}}</text>
+        </view>
+        <view wx:if="{{orderInfo.updatedAt !== orderInfo.createdAt}}" class="info-item">
+          <text class="info-label">更新时间</text>
+          <text class="info-value">{{formatDateTime(orderInfo.updatedAt)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务信息 -->
+    <view class="info-card">
+      <view class="card-title">服务信息</view>
+      <view class="service-content">
+        <view class="service-header">
+          <text class="service-name">{{orderInfo.serviceName}}</text>
+          <text class="service-price">{{formatPrice(orderInfo.price)}}</text>
+        </view>
+        <view wx:if="{{orderInfo.serviceDescription}}" class="service-description">
+          {{orderInfo.serviceDescription}}
+        </view>
+        <view wx:if="{{orderInfo.serviceRange}}" class="service-range">
+          <text class="range-label">服务范围：</text>
+          <text class="range-text">{{orderInfo.serviceRange}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预约信息 -->
+    <view class="info-card">
+      <view class="card-title">预约信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-label">预约日期</text>
+          <text class="info-value highlight">{{formatDate(orderInfo.appointmentDate)}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">联系人</text>
+          <text class="info-value">{{orderInfo.contactName}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">联系电话</text>
+          <text class="info-value">{{orderInfo.contactPhone}}</text>
+        </view>
+        <view wx:if="{{orderInfo.remarks}}" class="info-item">
+          <text class="info-label">备注信息</text>
+          <text class="info-value remarks">{{orderInfo.remarks}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-container">
+      <button 
+        wx:if="{{orderInfo.status === 'pending'}}"
+        class="action-btn cancel-btn {{cancelling ? 'disabled' : ''}}"
+        bindtap="onCancelOrder"
+        disabled="{{cancelling}}"
+      >
+        {{cancelling ? '取消中...' : '取消订单'}}
+      </button>
+      
+      <button 
+        wx:if="{{orderInfo.status === 'cancelled' || orderInfo.status === 'completed'}}"
+        class="action-btn reorder-btn"
+        bindtap="onReorder"
+      >
+        重新预约
+      </button>
+      
+      <button class="action-btn contact-btn" bindtap="onContactService">
+        联系客服
+      </button>
+    </view>
+
+    <!-- 温馨提示 -->
+    <view class="tip-card">
+      <view class="tip-title">💡 温馨提示</view>
+      <view class="tip-content">
+        <text class="tip-item">• 客服工作时间：9:00-18:00</text>
+        <text class="tip-item">• 如需修改预约信息，请及时联系客服</text>
+        <text class="tip-item">• 原型版暂支持线下支付，正式版将支持微信支付</text>
+        <text class="tip-item">• 服务完成后，欢迎给我们评价和建议</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:else class="error-container">
+    <view class="error-icon">😕</view>
+    <view class="error-text">订单信息加载失败</view>
+    <button class="retry-btn" bindtap="loadOrderDetail">重新加载</button>
+  </view>
+</view>

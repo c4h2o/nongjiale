@@ -1,0 +1,41 @@
+<!--pages/login/login.wxml-->
+<view class="login-container">
+  <view class="login-header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="app-name">智慧共享菜园</text>
+    <text class="app-desc">足不出户，管控菜园</text>
+  </view>
+
+  <view class="login-content">
+    <view class="feature-list">
+      <view class="feature-item">
+        <image class="feature-icon" src="/images/monitor.png"></image>
+        <text class="feature-text">实时监控菜园状态</text>
+      </view>
+      <view class="feature-item">
+        <image class="feature-icon" src="/images/control.png"></image>
+        <text class="feature-text">远程控制灌溉设备</text>
+      </view>
+      <view class="feature-item">
+        <image class="feature-icon" src="/images/service.png"></image>
+        <text class="feature-text">便捷预约农事服务</text>
+      </view>
+    </view>
+
+    <button 
+      class="login-btn {{loading ? 'loading' : ''}}" 
+      bindtap="handleWechatLogin"
+      disabled="{{loading}}"
+    >
+      <image wx:if="{{!loading}}" class="wechat-icon" src="/images/wechat.png"></image>
+      <text>{{loading ? '登录中...' : '微信快捷登录'}}</text>
+    </button>
+
+    <view class="login-tips">
+      <text class="tips-text">登录即表示同意</text>
+      <text class="tips-link">《用户协议》</text>
+      <text class="tips-text">和</text>
+      <text class="tips-link">《隐私政策》</text>
+    </view>
+  </view>
+</view>

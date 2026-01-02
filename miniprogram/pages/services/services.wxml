@@ -1,0 +1,87 @@
+<!--pages/services/services.wxml-->
+<view class="services-container">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <text class="page-title">农事服务</text>
+    <text class="page-desc">专业的菜园管理和农事服务</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 服务列表 -->
+  <view wx:elif="{{services.length > 0}}" class="services-list">
+    <view 
+      wx:for="{{services}}" 
+      wx:key="id" 
+      class="service-item"
+      data-service="{{item}}"
+      bindtap="onServiceItemTap"
+    >
+      <view class="service-header">
+        <image class="service-icon" src="{{getServiceIcon(item.name)}}"></image>
+        <view class="service-info">
+          <text class="service-name">{{item.name}}</text>
+          <text class="service-price">{{formatPrice(item.price)}}</text>
+        </view>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+
+      <view class="service-description">
+        <text>{{item.description}}</text>
+      </view>
+
+      <view class="service-details">
+        <view class="detail-row">
+          <text class="detail-label">服务范围:</text>
+          <text class="detail-value">{{item.serviceRange}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">预约须知:</text>
+          <text class="detail-value">{{item.bookingNotice}}</text>
+        </view>
+      </view>
+
+      <view class="service-actions">
+        <button class="book-btn" data-service="{{item}}" bindtap="onServiceItemTap">
+          立即预约
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <image class="empty-image" src="/images/empty-services.png"></image>
+    <text class="empty-title">暂无服务</text>
+    <text class="empty-desc">服务正在准备中，敬请期待</text>
+  </view>
+
+  <!-- 服务说明 -->
+  <view class="service-notice">
+    <view class="notice-header">
+      <image class="notice-icon" src="/images/info.png"></image>
+      <text class="notice-title">服务说明</text>
+    </view>
+    <view class="notice-content">
+      <view class="notice-item">
+        <text class="notice-number">1</text>
+        <text class="notice-text">所有服务均由专业农技师提供，确保服务质量</text>
+      </view>
+      <view class="notice-item">
+        <text class="notice-number">2</text>
+        <text class="notice-text">预约成功后，服务人员会提前联系确认服务时间</text>
+      </view>
+      <view class="notice-item">
+        <text class="notice-number">3</text>
+        <text class="notice-text">如需取消或修改预约，请提前24小时联系客服</text>
+      </view>
+      <view class="notice-item">
+        <text class="notice-number">4</text>
+        <text class="notice-text">原型版暂支持线下支付，正式版将支持在线支付</text>
+      </view>
+    </view>
+  </view>
+</view>

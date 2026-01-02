@@ -1,0 +1,174 @@
+<!--pages/promotion/promotion.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view wx:else class="content">
+    <!-- 推广码卡片 -->
+    <view class="promotion-card">
+      <view class="card-header">
+        <text class="card-title">我的专属推广码</text>
+        <text class="card-subtitle">邀请好友，共享收益</text>
+      </view>
+      
+      <!-- 二维码展示 -->
+      <view class="qr-section">
+        <view class="qr-container">
+          <image 
+            wx:if="{{qrCodeUrl}}"
+            class="qr-code" 
+            src="{{qrCodeUrl}}" 
+            mode="aspectFit"
+            show-menu-by-longpress="{{true}}"
+          />
+          <view wx:else class="qr-placeholder">
+            <text class="placeholder-icon">📱</text>
+            <text class="placeholder-text">推广码生成中...</text>
+          </view>
+        </view>
+        
+        <!-- 推广码文本 -->
+        <view class="code-text">
+          <text class="code-label">推广码：</text>
+          <text class="code-value">{{promotionCode || '生成中...'}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="action-buttons">
+        <button 
+          class="action-btn save-btn {{saving ? 'disabled' : ''}}"
+          bindtap="onSaveQRCode"
+          disabled="{{saving || !qrCodeUrl}}"
+        >
+          {{saving ? '保存中...' : '保存到相册'}}
+        </button>
+        
+        <button 
+          class="action-btn copy-btn"
+          bindtap="onCopyCode"
+          disabled="{{!promotionCode}}"
+        >
+          复制推广码
+        </button>
+      </view>
+    </view>
+
+    <!-- 推广数据统计 -->
+    <view class="stats-card">
+      <view class="stats-header">
+        <text class="stats-title">推广数据</text>
+        <text class="stats-subtitle">您的推广成果</text>
+      </view>
+      
+      <view class="stats-content">
+        <view class="stat-item">
+          <text class="stat-number">{{promotionStats.inviteCount}}</text>
+          <text class="stat-label">邀请人数</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-number">{{promotionStats.orderCount}}</text>
+          <text class="stat-label">推广订单</text>
+        </view>
+      </view>
+      
+      <view class="stats-actions">
+        <button class="stats-btn" bindtap="onViewInviteHistory">
+          查看详情
+        </button>
+      </view>
+    </view>
+
+    <!-- 推广工具 -->
+    <view class="tools-card">
+      <view class="tools-header">
+        <text class="tools-title">推广工具</text>
+        <text class="tools-subtitle">多种方式分享推广</text>
+      </view>
+      
+      <view class="tools-grid">
+        <view class="tool-item" bindtap="onSharePromotion">
+          <view class="tool-icon">📤</view>
+          <text class="tool-name">微信分享</text>
+          <text class="tool-desc">分享给好友</text>
+        </view>
+        
+        <view class="tool-item" bindtap="onGeneratePoster">
+          <view class="tool-icon">🎨</view>
+          <text class="tool-name">推广海报</text>
+          <text class="tool-desc">生成海报</text>
+        </view>
+        
+        <view class="tool-item" bindtap="onRoleSelect">
+          <view class="tool-icon">👥</view>
+          <text class="tool-name">角色选择</text>
+          <text class="tool-desc">引导注册</text>
+        </view>
+        
+        <view class="tool-item" bindtap="onContactService">
+          <view class="tool-icon">💬</view>
+          <text class="tool-name">联系客服</text>
+          <text class="tool-desc">咨询合作</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 推广规则 -->
+    <view class="rules-card">
+      <view class="rules-header">
+        <text class="rules-title">💡 推广规则</text>
+      </view>
+      
+      <view class="rules-content">
+        <text class="rules-text">{{promotionRules || '加载中...'}}</text>
+      </view>
+      
+      <view class="rules-actions">
+        <button class="rules-btn" bindtap="onViewRules">
+          查看详细规则
+        </button>
+      </view>
+    </view>
+
+    <!-- 快捷分享 -->
+    <view class="share-card">
+      <view class="share-header">
+        <text class="share-title">快捷分享</text>
+      </view>
+      
+      <view class="share-buttons">
+        <button 
+          class="share-btn wechat-btn" 
+          open-type="share"
+          data-name="shareAppMessage"
+        >
+          <view class="share-icon">💬</view>
+          <text class="share-text">分享给好友</text>
+        </button>
+        
+        <button 
+          class="share-btn moments-btn"
+          open-type="share"
+          data-name="shareTimeline"
+        >
+          <view class="share-icon">⭕</view>
+          <text class="share-text">分享到朋友圈</text>
+        </button>
+      </view>
+    </view>
+
+    <!-- 温馨提示 -->
+    <view class="tip-card">
+      <view class="tip-content">
+        <text class="tip-item">• 推广码永久有效，可重复使用</text>
+        <text class="tip-item">• 好友通过您的推广码注册并下单，您将获得积分奖励</text>
+        <text class="tip-item">• 原型版数据为演示数据，正式版将提供真实统计</text>
+        <text class="tip-item">• 如有疑问，请联系客服咨询</text>
+      </view>
+    </view>
+  </view>
+</view>

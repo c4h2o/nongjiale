@@ -1,0 +1,417 @@
+/* pages/promotion/promotion.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20rpx;
+  padding-bottom: 40rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 主要内容 */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* 通用卡片样式 */
+.promotion-card,
+.stats-card,
+.tools-card,
+.rules-card,
+.share-card,
+.tip-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 推广码卡片 */
+.promotion-card {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  text-align: center;
+}
+
+.card-header {
+  margin-bottom: 30rpx;
+}
+
+.card-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.card-subtitle {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 二维码区域 */
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.qr-container {
+  width: 300rpx;
+  height: 300rpx;
+  background: white;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-code {
+  width: 100%;
+  height: 100%;
+}
+
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+}
+
+.placeholder-icon {
+  font-size: 60rpx;
+  margin-bottom: 15rpx;
+}
+
+.placeholder-text {
+  font-size: 24rpx;
+}
+
+.code-text {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15rpx 25rpx;
+  border-radius: 25rpx;
+}
+
+.code-label {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.code-value {
+  font-size: 28rpx;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 80rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: 40rpx;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.action-btn.disabled {
+  opacity: 0.6;
+}
+
+.save-btn:active,
+.copy-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 统计卡片 */
+.stats-header {
+  text-align: center;
+  margin-bottom: 25rpx;
+}
+
+.stats-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.stats-subtitle {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.stats-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #4CAF50;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.stat-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background: #e9ecef;
+  margin: 0 40rpx;
+}
+
+.stats-actions {
+  text-align: center;
+}
+
+.stats-btn {
+  background: #f8f9fa;
+  color: #4CAF50;
+  border: 1rpx solid #4CAF50;
+  border-radius: 24rpx;
+  padding: 16rpx 32rpx;
+  font-size: 26rpx;
+}
+
+.stats-btn::after {
+  border: none;
+}
+
+/* 工具卡片 */
+.tools-header {
+  text-align: center;
+  margin-bottom: 25rpx;
+}
+
+.tools-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.tools-subtitle {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.tool-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.tool-item:active {
+  background: #e9ecef;
+  transform: scale(0.95);
+}
+
+.tool-icon {
+  font-size: 48rpx;
+  margin-bottom: 15rpx;
+}
+
+.tool-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.tool-desc {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 规则卡片 */
+.rules-header {
+  margin-bottom: 20rpx;
+}
+
+.rules-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.rules-content {
+  margin-bottom: 20rpx;
+}
+
+.rules-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.rules-actions {
+  text-align: center;
+}
+
+.rules-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 24rpx;
+  padding: 16rpx 32rpx;
+  font-size: 26rpx;
+}
+
+.rules-btn::after {
+  border: none;
+}
+
+/* 分享卡片 */
+.share-header {
+  text-align: center;
+  margin-bottom: 25rpx;
+}
+
+.share-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.share-btn {
+  flex: 1;
+  height: 100rpx;
+  border: none;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.wechat-btn {
+  background: linear-gradient(135deg, #07c160, #06ad56);
+  color: white;
+}
+
+.moments-btn {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+}
+
+.share-icon {
+  font-size: 32rpx;
+}
+
+.share-text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+/* 提示卡片 */
+.tip-card {
+  background: #fff8e1;
+  border-left: 4rpx solid #ffc107;
+}
+
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.tip-item {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .container {
+    padding: 15rpx;
+  }
+  
+  .qr-container {
+    width: 250rpx;
+    height: 250rpx;
+  }
+  
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .share-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}

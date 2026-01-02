@@ -1,0 +1,123 @@
+<!--pages/orders/orders.wxml-->
+<view class="container">
+  <!-- 标签页导航 -->
+  <view class="tab-nav">
+    <view 
+      class="tab-item {{activeTab === 'pending' ? 'active' : ''}}"
+      data-tab="pending"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">待确认</text>
+      <view wx:if="{{orders.pending.length > 0}}" class="tab-badge">{{orders.pending.length}}</view>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'confirmed' ? 'active' : ''}}"
+      data-tab="confirmed"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">已确认</text>
+      <view wx:if="{{orders.confirmed.length > 0}}" class="tab-badge">{{orders.confirmed.length}}</view>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'completed' ? 'active' : ''}}"
+      data-tab="completed"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">已完成</text>
+      <view wx:if="{{orders.completed.length > 0}}" class="tab-badge">{{orders.completed.length}}</view>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'cancelled' ? 'active' : ''}}"
+      data-tab="cancelled"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">已取消</text>
+      <view wx:if="{{orders.cancelled.length > 0}}" class="tab-badge">{{orders.cancelled.length}}</view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{isEmpty}}" class="empty-container">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无订单</view>
+    <view class="empty-desc">快去预约农事服务吧</view>
+    <button class="empty-btn" bindtap="onContactService">去预约服务</button>
+  </view>
+
+  <!-- 订单列表 -->
+  <view wx:else class="order-list">
+    <!-- 当前标签页无订单 -->
+    <view wx:if="{{orders[activeTab].length === 0}}" class="tab-empty">
+      <view class="tab-empty-text">暂无{{getStatusText(activeTab)}}订单</view>
+    </view>
+
+    <!-- 订单卡片 -->
+    <view 
+      wx:for="{{orders[activeTab]}}" 
+      wx:key="id"
+      class="order-card"
+      data-order-id="{{item.id}}"
+      bindtap="onOrderDetail"
+    >
+      <!-- 订单头部 -->
+      <view class="order-header">
+        <view class="order-info">
+          <text class="order-no">订单号：{{item.orderNo}}</text>
+          <text class="order-date">{{formatDate(item.createdAt)}}</text>
+        </view>
+        <view class="order-status {{getStatusClass(item.status)}}">
+          {{getStatusText(item.status)}}
+        </view>
+      </view>
+
+      <!-- 服务信息 -->
+      <view class="service-info">
+        <view class="service-name">{{item.serviceName}}</view>
+        <view class="service-details">
+          <text class="appointment-date">预约时间：{{formatDate(item.appointmentDate)}}</text>
+          <text class="contact-info">联系人：{{item.contactName}} {{item.contactPhone}}</text>
+        </view>
+      </view>
+
+      <!-- 价格信息 -->
+      <view class="price-info">
+        <text class="price-label">服务费用</text>
+        <text class="price-value">{{formatPrice(item.price)}}</text>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="order-actions" catchtap="true">
+        <button 
+          wx:if="{{item.status === 'pending'}}"
+          class="action-btn cancel-btn"
+          data-order-id="{{item.id}}"
+          bindtap="onCancelOrder"
+        >
+          取消订单
+        </button>
+        
+        <button 
+          wx:if="{{item.status === 'cancelled' || item.status === 'completed'}}"
+          class="action-btn reorder-btn"
+          data-order="{{item}}"
+          bindtap="onReorder"
+        >
+          重新预约
+        </button>
+        
+        <button class="action-btn detail-btn">查看详情</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view wx:if="{{!loading && !isEmpty}}" class="bottom-tip">
+    <text class="tip-text">如有疑问，请</text>
+    <text class="tip-link" bindtap="onContactService">联系客服</text>
+  </view>
+</view>

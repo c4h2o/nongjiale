@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "选择角色",
+  "navigationBarBackgroundColor": "#4CAF50",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f7fa",
+  "enablePullDownRefresh": false,
+  "disableScroll": false
+}

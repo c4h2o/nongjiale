@@ -1,0 +1,311 @@
+/* pages/orders/orders.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 标签页导航 */
+.tab-nav {
+  display: flex;
+  background: white;
+  border-bottom: 1rpx solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tab-item {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  color: #4CAF50;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background: #4CAF50;
+  border-radius: 2rpx;
+}
+
+.tab-text {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.tab-badge {
+  position: absolute;
+  top: 15rpx;
+  right: 20rpx;
+  background: #ff4757;
+  color: white;
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 10rpx;
+  min-width: 20rpx;
+  text-align: center;
+  line-height: 1;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500rpx;
+  padding: 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.empty-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 44rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+.empty-btn::after {
+  border: none;
+}
+
+/* 标签页空状态 */
+.tab-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300rpx;
+}
+
+.tab-empty-text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 订单列表 */
+.order-list {
+  padding: 20rpx;
+}
+
+/* 订单卡片 */
+.order-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.order-card:active {
+  transform: scale(0.98);
+}
+
+/* 订单头部 */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.order-no {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.order-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.order-status {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-confirmed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-completed {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* 服务信息 */
+.service-info {
+  margin-bottom: 20rpx;
+}
+
+.service-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.appointment-date,
+.contact-info {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 价格信息 */
+.price-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+  margin-bottom: 20rpx;
+}
+
+.price-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.price-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+/* 操作按钮 */
+.order-actions {
+  display: flex;
+  gap: 20rpx;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 16rpx 32rpx;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  border: 1rpx solid #ddd;
+  background: white;
+  color: #666;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.cancel-btn {
+  border-color: #ff4757;
+  color: #ff4757;
+}
+
+.reorder-btn {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.detail-btn {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+/* 底部提示 */
+.bottom-tip {
+  text-align: center;
+  padding: 40rpx 20rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.tip-link {
+  color: #4CAF50;
+  text-decoration: underline;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .order-card {
+    padding: 24rpx;
+  }
+  
+  .service-name {
+    font-size: 28rpx;
+  }
+  
+  .order-actions {
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    flex: 1;
+    min-width: 120rpx;
+  }
+}

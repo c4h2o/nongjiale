@@ -1,0 +1,277 @@
+/* pages/service-book/service-book.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 主要内容 */
+.content {
+  padding: 20rpx;
+}
+
+/* 服务信息卡片 */
+.service-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.service-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.service-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.service-description {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 15rpx;
+}
+
+.service-range {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 15rpx;
+}
+
+.booking-notice {
+  background: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  border-left: 4rpx solid #4CAF50;
+}
+
+.notice-label {
+  font-size: 26rpx;
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.notice-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 表单容器 */
+.form-container {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  margin-bottom: 40rpx;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+/* 日期选择 */
+.date-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.date-option {
+  flex: 1;
+  min-width: 200rpx;
+  background: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.date-option.selected {
+  background: #e8f5e8;
+  border-color: #4CAF50;
+}
+
+.date-label {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.date-option.selected .date-label {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.date-value {
+  display: block;
+  font-size: 24rpx;
+  color: #888;
+}
+
+.date-option.selected .date-value {
+  color: #4CAF50;
+}
+
+/* 输入组件 */
+.input-group {
+  margin-bottom: 30rpx;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.required {
+  color: #ff4757;
+}
+
+.input-field {
+  width: 100%;
+  height: 80rpx;
+  background: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: #4CAF50;
+  background: white;
+}
+
+.textarea-field {
+  width: 100%;
+  min-height: 120rpx;
+  background: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.textarea-field:focus {
+  border-color: #4CAF50;
+  background: white;
+}
+
+/* 提交容器 */
+.submit-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 20rpx;
+  border-top: 1rpx solid #e9ecef;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15rpx;
+}
+
+.submit-btn.disabled {
+  background: #ccc;
+  color: #999;
+}
+
+.submit-btn::after {
+  border: none;
+}
+
+.payment-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.notice-icon {
+  font-size: 24rpx;
+}
+
+.notice-text {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .date-option {
+    min-width: 160rpx;
+  }
+  
+  .service-name {
+    font-size: 32rpx;
+  }
+  
+  .service-price {
+    font-size: 28rpx;
+  }
+}

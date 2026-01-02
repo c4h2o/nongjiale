@@ -1,0 +1,344 @@
+/* pages/order-detail/order-detail.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 主要内容 */
+.content {
+  padding: 20rpx;
+}
+
+/* 状态卡片 */
+.status-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.status-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+}
+
+.status-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.status-icon.status-pending {
+  background: #fff3cd;
+}
+
+.status-icon.status-confirmed {
+  background: #d4edda;
+}
+
+.status-icon.status-completed {
+  background: #cce5ff;
+}
+
+.status-icon.status-cancelled {
+  background: #f8d7da;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-text {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.status-text.status-pending {
+  color: #856404;
+}
+
+.status-text.status-confirmed {
+  color: #155724;
+}
+
+.status-text.status-completed {
+  color: #004085;
+}
+
+.status-text.status-cancelled {
+  color: #721c24;
+}
+
+.status-desc {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 信息卡片 */
+.info-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 15rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 信息列表 */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20rpx;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+  flex-shrink: 0;
+  width: 160rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+  text-align: right;
+  word-break: break-all;
+}
+
+.info-value.highlight {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.info-value.remarks {
+  text-align: left;
+  line-height: 1.5;
+}
+
+/* 服务内容 */
+.service-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.service-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.service-description {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.service-range {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.range-label {
+  color: #888;
+}
+
+.range-text {
+  color: #666;
+}
+
+/* 操作容器 */
+.action-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 20rpx;
+  border-top: 1rpx solid #e9ecef;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  border: none;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.cancel-btn {
+  background: #ff4757;
+  color: white;
+}
+
+.cancel-btn.disabled {
+  background: #ccc;
+  color: #999;
+}
+
+.reorder-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.contact-btn {
+  background: #007bff;
+  color: white;
+}
+
+/* 温馨提示 */
+.tip-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.tip-item {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 错误状态 */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500rpx;
+  padding: 40rpx;
+}
+
+.error-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.6;
+}
+
+.error-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.retry-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 44rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+.retry-btn::after {
+  border: none;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8rpx;
+  }
+  
+  .info-label {
+    width: auto;
+  }
+  
+  .info-value {
+    text-align: left;
+  }
+  
+  .service-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10rpx;
+  }
+  
+  .action-container {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+  }
+}

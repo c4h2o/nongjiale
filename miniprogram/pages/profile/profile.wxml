@@ -1,0 +1,93 @@
+<!--pages/profile/profile.wxml-->
+<view class="profile-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 主要内容 -->
+  <view wx:else>
+    <!-- 用户信息头部 -->
+    <view class="user-header">
+      <view class="user-info">
+        <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view class="user-details">
+          <text class="nickname">{{userInfo.nickname}}</text>
+          <text class="user-id">ID: {{userInfo.id.substr(-8)}}</text>
+        </view>
+      </view>
+      <view class="settings-btn" bindtap="onSettingsTap">
+        <image class="settings-icon" src="/images/settings.png"></image>
+      </view>
+    </view>
+
+    <!-- 数据统计 -->
+    <view class="stats-section">
+      <view class="stat-item">
+        <text class="stat-number">{{gardenCount}}</text>
+        <text class="stat-label">绑定菜园</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{orderCount}}</text>
+        <text class="stat-label">我的订单</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{userInfo.promotionCode ? 1 : 0}}</text>
+        <text class="stat-label">推广码</text>
+      </view>
+    </view>
+
+    <!-- 功能菜单 -->
+    <view class="menu-section">
+      <view 
+        wx:for="{{menuItems}}" 
+        wx:key="id" 
+        class="menu-item" 
+        data-item="{{item}}"
+        bindtap="onMenuItemTap"
+      >
+        <view class="menu-left">
+          <image class="menu-icon" src="{{item.icon}}"></image>
+          <view class="menu-text">
+            <text class="menu-title">{{item.title}}</text>
+            <text class="menu-desc">{{item.desc}}</text>
+          </view>
+        </view>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+    </view>
+
+    <!-- 推广码快捷入口 -->
+    <view class="promotion-section card">
+      <view class="promotion-header">
+        <text class="promotion-title">我的推广码</text>
+        <text class="promotion-code">{{userInfo.promotionCode}}</text>
+      </view>
+      <view class="promotion-desc">
+        <text>邀请好友注册并下单，您可获得积分奖励</text>
+      </view>
+      <button class="promotion-btn" bindtap="onMenuItemTap" data-item="{{menuItems[2]}}">
+        查看详情
+      </button>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="quick-actions">
+      <button class="action-button" open-type="share">
+        <image class="action-icon" src="/images/share.png"></image>
+        <text>分享小程序</text>
+      </button>
+      <button class="action-button" bindtap="onSettingsTap">
+        <image class="action-icon" src="/images/feedback.png"></image>
+        <text>意见反馈</text>
+      </button>
+    </view>
+
+    <!-- 版本信息 -->
+    <view class="version-info">
+      <text class="version-text">智慧共享菜园 v1.0</text>
+    </view>
+  </view>
+</view>

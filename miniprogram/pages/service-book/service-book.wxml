@@ -1,0 +1,102 @@
+<!--pages/service-book/service-book.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view wx:else class="content">
+    <!-- 服务信息卡片 -->
+    <view wx:if="{{serviceInfo}}" class="service-card">
+      <view class="service-header">
+        <text class="service-name">{{serviceInfo.name}}</text>
+        <text class="service-price">{{formatPrice(serviceInfo.price)}}</text>
+      </view>
+      <view class="service-description">{{serviceInfo.description}}</view>
+      <view class="service-range">服务范围：{{serviceInfo.serviceRange}}</view>
+      <view wx:if="{{serviceInfo.bookingNotice}}" class="booking-notice">
+        <text class="notice-label">预约须知：</text>
+        <text class="notice-text">{{serviceInfo.bookingNotice}}</text>
+      </view>
+    </view>
+
+    <!-- 预约表单 -->
+    <view class="form-container">
+      <!-- 预约日期选择 -->
+      <view class="form-section">
+        <view class="section-title">选择预约日期</view>
+        <view class="date-options">
+          <view 
+            wx:for="{{dateOptions}}" 
+            wx:key="value"
+            class="date-option {{formData.appointmentDate === item.value ? 'selected' : ''}}"
+            data-date="{{item.value}}"
+            bindtap="onDateSelect"
+          >
+            <text class="date-label">{{getDateLabel(item.value)}}</text>
+            <text class="date-value">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 联系信息 -->
+      <view class="form-section">
+        <view class="section-title">联系信息</view>
+        
+        <view class="input-group">
+          <view class="input-label">联系人 <text class="required">*</text></view>
+          <input 
+            class="input-field"
+            type="text"
+            placeholder="请输入联系人姓名"
+            value="{{formData.contactName}}"
+            bindinput="onContactNameInput"
+            maxlength="20"
+          />
+        </view>
+
+        <view class="input-group">
+          <view class="input-label">联系电话 <text class="required">*</text></view>
+          <input 
+            class="input-field"
+            type="number"
+            placeholder="请输入手机号"
+            value="{{formData.contactPhone}}"
+            bindinput="onContactPhoneInput"
+            maxlength="11"
+          />
+        </view>
+
+        <view class="input-group">
+          <view class="input-label">备注信息</view>
+          <textarea 
+            class="textarea-field"
+            placeholder="请输入特殊需求或备注信息（选填）"
+            value="{{formData.remarks}}"
+            bindinput="onRemarksInput"
+            maxlength="200"
+            show-confirm-bar="{{false}}"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-container">
+      <button 
+        class="submit-btn {{submitting ? 'disabled' : ''}}"
+        bindtap="handleSubmitOrder"
+        disabled="{{submitting}}"
+      >
+        {{submitting ? '提交中...' : '确认预约'}}
+      </button>
+      
+      <!-- 支付说明 -->
+      <view class="payment-notice">
+        <text class="notice-icon">💡</text>
+        <text class="notice-text">原型版暂支持线下支付，订单提交后请等待客服联系</text>
+      </view>
+    </view>
+  </view>
+</view>

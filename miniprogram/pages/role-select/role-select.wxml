@@ -1,0 +1,107 @@
+<!--pages/role-select/role-select.wxml-->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="header-content">
+      <text class="header-title">选择您的角色</text>
+      <text class="header-subtitle">根据您的需求选择合适的角色，开启智慧菜园之旅</text>
+    </view>
+    <view class="header-decoration">🌿</view>
+  </view>
+
+  <!-- 角色选择卡片 -->
+  <view class="roles-container">
+    <view 
+      wx:for="{{roles}}" 
+      wx:key="id"
+      class="role-card {{getRoleClass(item.id)}}"
+      data-role-id="{{item.id}}"
+      bindtap="onRoleSelect"
+      style="border-color: {{selectedRole === item.id ? item.color : '#e9ecef'}}"
+    >
+      <!-- 角色图标和标题 -->
+      <view class="role-header">
+        <view class="role-icon" style="background-color: {{item.color}}20">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="role-info">
+          <text class="role-title">{{item.title}}</text>
+          <text class="role-subtitle" style="color: {{item.color}}">{{item.subtitle}}</text>
+        </view>
+        <view class="role-selector">
+          <view 
+            class="selector-circle {{selectedRole === item.id ? 'selected' : ''}}"
+            style="border-color: {{item.color}}; background-color: {{selectedRole === item.id ? item.color : 'transparent'}}"
+          >
+            <text wx:if="{{selectedRole === item.id}}" class="selector-check">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 角色描述 -->
+      <view class="role-description">
+        <text class="description-text">{{item.description}}</text>
+      </view>
+
+      <!-- 角色特点 -->
+      <view class="role-features">
+        <view 
+          wx:for="{{item.features}}" 
+          wx:key="*this"
+          wx:for-item="feature"
+          class="feature-item"
+        >
+          <text class="feature-dot" style="color: {{item.color}}">•</text>
+          <text class="feature-text">{{feature}}</text>
+        </view>
+      </view>
+
+      <!-- 了解更多按钮 -->
+      <view class="role-actions">
+        <button 
+          class="learn-more-btn"
+          data-role-id="{{item.id}}"
+          bindtap="onLearnMore"
+          catchtap="true"
+        >
+          了解更多
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 确认按钮 -->
+  <view class="confirm-container">
+    <button 
+      class="confirm-btn {{selectedRole ? 'active' : 'disabled'}}"
+      bindtap="onConfirmRole"
+      disabled="{{!selectedRole || submitting}}"
+    >
+      {{submitting ? '处理中...' : (selectedRole ? (roles.find(r => r.id === selectedRole)?.buttonText || '确认选择') : '请先选择角色')}}
+    </button>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <button class="action-btn skip-btn" bindtap="onSkipSelection">
+      暂时跳过
+    </button>
+    <button class="action-btn contact-btn" bindtap="onContactService">
+      联系客服
+    </button>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="tip-section">
+    <view class="tip-header">
+      <text class="tip-icon">💡</text>
+      <text class="tip-title">温馨提示</text>
+    </view>
+    <view class="tip-content">
+      <text class="tip-item">• 您可以根据实际情况选择合适的角色</text>
+      <text class="tip-item">• 角色选择后可以在个人中心进行修改</text>
+      <text class="tip-item">• 两种角色可以同时拥有，互不冲突</text>
+      <text class="tip-item">• 如有疑问，请随时联系客服咨询</text>
+    </view>
+  </view>
+</view>

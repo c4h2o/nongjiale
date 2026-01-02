@@ -1,0 +1,185 @@
+<!--pages/monitor/monitor.wxml-->
+<view class="monitor-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 主要内容 -->
+  <view wx:else>
+    <!-- 视频播放区域 -->
+    <view class="video-section">
+      <view class="video-container">
+        <!-- 实时视频 -->
+        <live-player 
+          wx:if="{{streamUrl && !videoError}}"
+          id="gardenVideo"
+          class="video-player"
+          src="{{streamUrl}}"
+          mode="live"
+          autoplay="{{true}}"
+          muted="{{false}}"
+          orientation="vertical"
+          object-fit="contain"
+          background-mute="{{false}}"
+          min-cache="1"
+          max-cache="3"
+          bindstatechange="onVideoStateChange"
+          binderror="onVideoError"
+          bindfullscreenchange="onFullscreenChange"
+        ></live-player>
+
+        <!-- 视频错误状态 -->
+        <view wx:else class="video-error">
+          <image class="error-icon" src="/images/video-error.png"></image>
+          <text class="error-text">视频加载失败</text>
+          <button class="retry-btn" bindtap="loadVideoStream">重试</button>
+        </view>
+
+        <!-- 视频控制按钮 -->
+        <view class="video-controls">
+          <button class="control-btn" bindtap="enterFullscreen">
+            <image class="control-icon" src="/images/fullscreen.png"></image>
+          </button>
+          <button class="control-btn" bindtap="takeSnapshot">
+            <image class="control-icon" src="/images/camera.png"></image>
+          </button>
+          <button class="control-btn" bindtap="onRefresh">
+            <image class="control-icon" src="/images/refresh.png"></image>
+          </button>
+        </view>
+
+        <!-- 视频状态信息 -->
+        <view class="video-status">
+          <view class="status-item">
+            <text class="status-label">摄像头:</text>
+            <text class="status-value {{deviceStatus.camera.status === 'online' ? 'online' : 'offline'}}">
+              {{deviceStatus.camera.status === 'online' ? '在线' : '离线'}}
+            </text>
+          </view>
+          <view class="status-item">
+            <text class="status-label">延迟:</text>
+            <text class="status-value">{{deviceStatus.camera.delay}}秒</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设备控制区域 -->
+    <view class="control-section">
+      <!-- 灌溉控制 -->
+      <view class="irrigation-control card">
+        <view class="control-header">
+          <image class="control-icon-large" src="/images/irrigation.png"></image>
+          <view class="control-info">
+            <text class="control-title">智能灌溉</text>
+            <text class="control-desc">远程控制菜园浇水系统</text>
+          </view>
+          <view class="device-status status-{{deviceStatus.irrigation.status}}">
+            {{deviceStatus.irrigation.status === 'idle' ? '待机' : 
+              deviceStatus.irrigation.status === 'running' ? '运行中' : '错误'}}
+          </view>
+        </view>
+
+        <!-- 运行状态显示 -->
+        <view wx:if="{{deviceStatus.irrigation.status === 'running'}}" class="running-status">
+          <view class="countdown-display">
+            <text class="countdown-label">剩余时间:</text>
+            <text class="countdown-time">{{formatCountdown(deviceStatus.irrigation.remainingTime)}}</text>
+          </view>
+          <progress 
+            class="progress-bar" 
+            percent="{{(deviceStatus.irrigation.remainingTime / (selectedDuration * 60)) * 100}}"
+            stroke-width="8"
+            color="#4CAF50"
+            backgroundColor="#f0f0f0"
+          ></progress>
+          <button class="stop-btn" bindtap="stopIrrigation">
+            <image class="btn-icon" src="/images/stop.png"></image>
+            <text>停止浇水</text>
+          </button>
+        </view>
+
+        <!-- 控制面板 -->
+        <view wx:else class="control-panel">
+          <!-- 时长选择 -->
+          <view class="duration-selector">
+            <text class="selector-label">浇水时长:</text>
+            <view class="duration-options">
+              <view 
+                wx:for="{{irrigationDurations}}" 
+                wx:key="value"
+                class="duration-option {{selectedDuration === item.value ? 'selected' : ''}}"
+                data-duration="{{item.value}}"
+                bindtap="onDurationSelect"
+              >
+                <text>{{item.label}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 开始按钮 -->
+          <button 
+            class="start-btn {{deviceStatus.irrigation.cooldownRemaining > 0 ? 'disabled' : ''}}"
+            bindtap="startIrrigation"
+            disabled="{{deviceStatus.irrigation.cooldownRemaining > 0}}"
+          >
+            <image class="btn-icon" src="/images/water.png"></image>
+            <text wx:if="{{deviceStatus.irrigation.cooldownRemaining > 0}}">
+              冷却中 ({{deviceStatus.irrigation.cooldownRemaining}}s)
+            </text>
+            <text wx:else>开始浇水</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 环境信息 -->
+      <view class="environment-info card">
+        <view class="info-header">
+          <text class="info-title">环境信息</text>
+          <text class="info-time">{{new Date().toLocaleTimeString()}}</text>
+        </view>
+        <view class="info-grid">
+          <view class="info-item">
+            <image class="info-icon" src="/images/temperature.png"></image>
+            <text class="info-label">温度</text>
+            <text class="info-value">25°C</text>
+          </view>
+          <view class="info-item">
+            <image class="info-icon" src="/images/humidity.png"></image>
+            <text class="info-label">湿度</text>
+            <text class="info-value">65%</text>
+          </view>
+          <view class="info-item">
+            <image class="info-icon" src="/images/light.png"></image>
+            <text class="info-label">光照</text>
+            <text class="info-value">良好</text>
+          </view>
+          <view class="info-item">
+            <image class="info-icon" src="/images/soil.png"></image>
+            <text class="info-label">土壤</text>
+            <text class="info-value">湿润</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<wxs module="utils">
+  function formatCountdown(seconds) {
+    if (!seconds || seconds <= 0) return '00:00'
+    
+    var minutes = Math.floor(seconds / 60)
+    var remainingSeconds = seconds % 60
+    
+    var minutesStr = minutes < 10 ? '0' + minutes : minutes.toString()
+    var secondsStr = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds.toString()
+    
+    return minutesStr + ':' + secondsStr
+  }
+  
+  module.exports = {
+    formatCountdown: formatCountdown
+  }
+</wxs>

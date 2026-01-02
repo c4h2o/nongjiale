@@ -1,0 +1,99 @@
+<!--pages/garden-bind/garden-bind.wxml-->
+<view class="bind-container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">绑定菜园</text>
+    <text class="page-desc">输入菜园ID或扫描二维码绑定您的专属菜园</text>
+  </view>
+
+  <!-- 绑定表单 -->
+  <view class="bind-form card">
+    <view class="form-section">
+      <view class="input-label">
+        <text>菜园ID</text>
+        <text class="required">*</text>
+      </view>
+      <view class="input-container">
+        <input 
+          class="garden-id-input"
+          type="text"
+          placeholder="请输入菜园ID（如：GD12345678）"
+          value="{{gardenId}}"
+          maxlength="10"
+          bindinput="onGardenIdInput"
+          bindconfirm="handleBindGarden"
+          bindfocus="onInputFocus"
+          bindblur="onInputBlur"
+        />
+        <button class="scan-btn" bindtap="handleScanCode">
+          <image class="scan-icon" src="/images/scan.png"></image>
+        </button>
+      </view>
+      <view class="input-tip">
+        <text>菜园ID格式：GD + 8位数字，如 GD12345678</text>
+      </view>
+    </view>
+
+    <button 
+      class="bind-btn {{loading ? 'loading' : ''}}"
+      bindtap="handleBindGarden"
+      disabled="{{loading}}"
+    >
+      {{loading ? '绑定中...' : '绑定菜园'}}
+    </button>
+  </view>
+
+  <!-- 绑定说明 -->
+  <view class="bind-info card">
+    <view class="info-header">
+      <image class="info-icon" src="/images/info.png"></image>
+      <text class="info-title">绑定说明</text>
+    </view>
+    <view class="info-content">
+      <view class="info-item">
+        <text class="info-number">1</text>
+        <text class="info-text">菜园ID由菜园管理员提供，请确保输入正确</text>
+      </view>
+      <view class="info-item">
+        <text class="info-number">2</text>
+        <text class="info-text">绑定成功后可远程查看菜园状态和控制设备</text>
+      </view>
+      <view class="info-item">
+        <text class="info-number">3</text>
+        <text class="info-text">如需解绑，请在"我的菜园"页面进行操作</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 绑定历史 -->
+  <view wx:if="{{bindHistory.length > 0}}" class="history-section">
+    <view class="section-header">
+      <text class="section-title">最近绑定</text>
+    </view>
+    <view class="history-list">
+      <view 
+        wx:for="{{bindHistory}}" 
+        wx:key="id" 
+        class="history-item"
+        data-garden="{{item}}"
+        bindtap="onHistoryItemTap"
+      >
+        <view class="history-info">
+          <text class="history-name">{{item.name}}</text>
+          <text class="history-location">{{item.location}}</text>
+        </view>
+        <view class="history-status status-{{item.status}}">
+          {{item.status === 'active' ? '正常' : 
+            item.status === 'inactive' ? '离线' : '维护中'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{bindHistory.length === 0}}" class="empty-state">
+    <image class="empty-image" src="/images/empty-garden.png"></image>
+    <text class="empty-title">还没有绑定菜园</text>
+    <text class="empty-desc">输入菜园ID开始您的智慧菜园之旅</text>
+  </view>
+</view>
