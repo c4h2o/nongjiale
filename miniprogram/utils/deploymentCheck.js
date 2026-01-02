@@ -1,361 +1,254 @@
 // 部署准备检查工具
-const systemIntegration = require('./systemIntegration')
-const performanceMonitor = require('./performance')
-const errorHandler = require('./errorHandler')
-const compatibilityCheck = require('./compatibilityCheck')
-
 class DeploymentCheck {
   constructor() {
     this.checkResults = []
-    this.deploymentReady = false
   }
 
-  // 执行部署前检查
+  // 运行完整的部署准备检查
   async runDeploymentCheck() {
-    console.log('开始执行部署前检查...')
+    console.log('开始部署准备检查...')
     
     const checks = [
-      { name: '兼容性全面检查', check: this.checkFullCompatibility.bind(this) },
-      { name: '系统兼容性检查', check: this.checkSystemCompatibility.bind(this) },
-      { name: '性能指标检查', check: this.checkPerformanceMetrics.bind(this) },
-      { name: '功能完整性检查', check: this.checkFunctionality.bind(this) },
-      { name: '错误处理检查', check: this.checkErrorHandling.bind(this) },
-      { name: '安全性检查', check: this.checkSecurity.bind(this) },
-      { name: '配置文件检查', check: this.checkConfiguration.bind(this) },
-      { name: '资源文件检查', check: this.checkResources.bind(this) },
-      { name: '网络环境检查', check: this.checkNetworkEnvironment.bind(this) },
-      { name: '部署环境准备检查', check: this.checkDeploymentEnvironment.bind(this) }
+      { name: '环境配置检查', check: this.checkEnvironmentConfig },
+      { name: '微信基础库版本检查', check: this.checkWeChatSDKVersion },
+      { name: 'API配置检查', check: this.checkApiConfiguration },
+      { name: '页面配置检查', check: this.checkPageConfiguration },
+      { name: '资源文件检查', check: this.checkResourceFiles },
+      { name: '权限配置检查', check: this.checkPermissions },
+      { name: '性能配置检查', check: this.checkPerformanceConfig },
+      { name: '安全配置检查', check: this.checkSecurityConfig },
+      { name: '兼容性检查', check: this.checkCompatibility }
     ]
 
-    const results = []
-    let allPassed = true
+    this.checkResults = []
+    let passed = 0
+    let failed = 0
+    let warnings = 0
 
     for (const checkItem of checks) {
       try {
         console.log(`执行检查: ${checkItem.name}`)
-        const result = await checkItem.check()
-        results.push({
+        const result = await checkItem.check.call(this)
+        
+        this.checkResults.push({
           name: checkItem.name,
-          status: result.passed ? 'passed' : 'warning',
-          details: result,
+          status: result.status || 'PASSED',
+          result: result,
           timestamp: new Date().toISOString()
         })
         
-        if (!result.passed) {
-          allPassed = false
+        if (result.status === 'WARNING') {
+          warnings++
+        } else {
+          passed++
         }
         
-        console.log(`${result.passed ? '✓' : '⚠'} ${checkItem.name} - ${result.passed ? '通过' : '警告'}`)
+        console.log(`✅ ${checkItem.name} - ${result.status || 'PASSED'}`)
       } catch (error) {
-        results.push({
+        this.checkResults.push({
           name: checkItem.name,
-          status: 'failed',
+          status: 'FAILED',
           error: error.message,
           timestamp: new Date().toISOString()
         })
-        allPassed = false
-        console.error(`✗ ${checkItem.name} - 失败:`, error.message)
+        
+        failed++
+        console.error(`❌ ${checkItem.name} - 失败:`, error.message)
       }
     }
 
-    this.checkResults = results
-    this.deploymentReady = allPassed
+    const summary = {
+      total: checks.length,
+      passed,
+      failed,
+      warnings,
+      readyForDeployment: failed === 0
+    }
 
-    return this.generateDeploymentReport()
-  }
-
-  // 检查完整兼容性
-  async checkFullCompatibility() {
-    const compatibilityReport = await compatibilityCheck.runCompatibilityCheck()
+    console.log('部署准备检查完成:', summary)
     
-    const issues = []
-    let passed = compatibilityReport.summary.allCompatible
-
-    if (!passed) {
-      issues.push(...compatibilityReport.issues.map(issue => ({
-        type: issue.type,
-        message: issue.message,
-        solution: issue.solution
-      })))
-    }
-
     return {
-      passed,
-      compatibilityReport,
-      issues,
-      recommendations: compatibilityReport.recommendations
+      summary,
+      results: this.checkResults,
+      timestamp: new Date().toISOString()
     }
   }
 
-  // 检查部署环境准备
-  async checkDeploymentEnvironment() {
+  // 环境配置检查
+  async checkEnvironmentConfig() {
+    const app = getApp()
     const issues = []
-    let passed = true
+    const warnings = []
 
-    // 检查环境配置
-    const envChecks = [
-      {
-        name: '生产环境配置',
-        check: () => {
-          const app = getApp()
-          const isDev = app.globalData.isDev
-          
-          if (isDev) {
-            return {
-              passed: false,
-              message: '当前为开发环境，需要切换到生产环境配置'
-            }
-          }
-          return { passed: true }
-        }
-      },
-      {
-        name: 'API地址配置',
-        check: () => {
-          const app = getApp()
-          const baseUrl = app.globalData.baseUrl
-          
-          if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
-            return {
-              passed: false,
-              message: 'API地址仍为本地地址，需要配置生产环境API地址'
-            }
-          }
-          return { passed: true }
-        }
-      },
-      {
-        name: '小程序配置',
-        check: () => {
-          // 检查app.json配置
-          try {
-            // 这里应该读取app.json文件，简化为模拟检查
-            const requiredFields = ['pages', 'window', 'networkTimeout']
-            const missingFields = [] // 模拟检查结果
-            
-            if (missingFields.length > 0) {
-              return {
-                passed: false,
-                message: `app.json缺少必要配置: ${missingFields.join(', ')}`
-              }
-            }
-            return { passed: true }
-          } catch (error) {
-            return {
-              passed: false,
-              message: `app.json配置检查失败: ${error.message}`
-            }
-          }
-        }
-      },
-      {
-        name: '域名配置',
-        check: () => {
-          // 检查是否配置了合法域名
-          const app = getApp()
-          const baseUrl = app.globalData.baseUrl
-          
-          try {
-            const url = new URL(baseUrl)
-            if (url.protocol !== 'https:') {
-              return {
-                passed: false,
-                message: 'API地址必须使用HTTPS协议'
-              }
-            }
-            return { passed: true }
-          } catch (error) {
-            return {
-              passed: false,
-              message: 'API地址格式不正确'
-            }
-          }
-        }
-      }
-    ]
+    // 检查开发环境标识
+    if (app.globalData.isDev === true) {
+      warnings.push('当前为开发环境，部署前需要切换到生产环境')
+    }
 
-    for (const envCheck of envChecks) {
-      try {
-        const result = envCheck.check()
-        if (!result.passed) {
-          passed = false
-          issues.push({
-            type: 'environment',
-            check: envCheck.name,
-            message: result.message,
-            solution: '请修复环境配置问题'
-          })
-        }
-      } catch (error) {
-        passed = false
-        issues.push({
-          type: 'environment',
-          check: envCheck.name,
-          message: `检查失败: ${error.message}`,
-          solution: '请检查环境配置'
-        })
+    // 检查API地址
+    if (app.globalData.baseUrl.includes('localhost') || app.globalData.baseUrl.includes('127.0.0.1')) {
+      issues.push('API地址仍指向本地服务器，需要更新为生产环境地址')
+    }
+
+    // 检查必要的全局配置
+    const requiredConfigs = ['baseUrl', 'cacheTime', 'pollInterval']
+    for (const config of requiredConfigs) {
+      if (!app.globalData[config]) {
+        issues.push(`缺少必要配置: ${config}`)
       }
     }
 
-    // 检查版本信息
-    const versionInfo = this.checkVersionInfo()
-    if (!versionInfo.valid) {
-      passed = false
-      issues.push(...versionInfo.issues)
+    if (issues.length > 0) {
+      throw new Error(`环境配置问题: ${issues.join(', ')}`)
     }
 
     return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['完善部署环境配置', '检查版本信息'] : []
+      status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+      message: '环境配置检查完成',
+      warnings: warnings,
+      configs: {
+        isDev: app.globalData.isDev,
+        baseUrl: app.globalData.baseUrl,
+        cacheTime: app.globalData.cacheTime,
+        pollInterval: app.globalData.pollInterval
+      }
     }
   }
 
-  // 检查版本信息
-  checkVersionInfo() {
+  // 微信基础库版本检查
+  async checkWeChatSDKVersion() {
+    try {
+      const systemInfo = wx.getSystemInfoSync()
+      const sdkVersion = systemInfo.SDKVersion
+      const minVersion = '2.30.0'
+
+      const versionCompare = this.compareVersion(sdkVersion, minVersion)
+      
+      if (versionCompare < 0) {
+        throw new Error(`基础库版本过低: ${sdkVersion}，最低要求: ${minVersion}`)
+      }
+
+      return {
+        message: '基础库版本检查通过',
+        currentVersion: sdkVersion,
+        minVersion: minVersion,
+        systemInfo: {
+          platform: systemInfo.platform,
+          version: systemInfo.version,
+          model: systemInfo.model
+        }
+      }
+    } catch (error) {
+      throw new Error(`基础库版本检查失败: ${error.message}`)
+    }
+  }
+
+  // API配置检查
+  async checkApiConfiguration() {
+    const app = getApp()
+    const baseUrl = app.globalData.baseUrl
     const issues = []
-    let valid = true
+
+    // 检查API地址格式
+    if (!baseUrl.startsWith('https://')) {
+      issues.push('生产环境必须使用HTTPS协议')
+    }
+
+    // 检查API地址可达性（简单检查）
+    try {
+      const result = await this.makeRequest(`${baseUrl}/health`, { timeout: 5000 })
+      if (!result || result.status !== 'ok') {
+        issues.push('API健康检查失败')
+      }
+    } catch (error) {
+      issues.push(`API连接测试失败: ${error.message}`)
+    }
+
+    if (issues.length > 0) {
+      throw new Error(`API配置问题: ${issues.join(', ')}`)
+    }
+
+    return {
+      message: 'API配置检查通过',
+      baseUrl: baseUrl,
+      protocol: baseUrl.startsWith('https://') ? 'HTTPS' : 'HTTP'
+    }
+  }
+
+  // 页面配置检查
+  async checkPageConfiguration() {
+    const issues = []
+    const warnings = []
 
     try {
-      // 检查package.json版本（模拟）
-      const packageVersion = '1.0.0' // 应该从实际文件读取
+      // 检查app.json配置
+      const appConfig = require('../app.json')
       
-      if (!packageVersion || packageVersion === '0.0.0') {
-        valid = false
-        issues.push({
-          type: 'version',
-          message: '项目版本号未设置或无效',
-          solution: '请在package.json中设置正确的版本号'
-        })
-      }
+      // 检查必要的页面
+      const requiredPages = [
+        'pages/index/index',
+        'pages/login/login',
+        'pages/gardens/gardens',
+        'pages/monitor/monitor',
+        'pages/services/services',
+        'pages/orders/orders',
+        'pages/profile/profile',
+        'pages/promotion/promotion'
+      ]
 
-      // 检查小程序版本配置
-      const appVersion = '1.0.0' // 应该从app.json或其他配置读取
-      
-      if (!appVersion) {
-        issues.push({
-          type: 'version',
-          message: '小程序版本号未配置',
-          solution: '请配置小程序版本号'
-        })
-      }
-
-    } catch (error) {
-      valid = false
-      issues.push({
-        type: 'version',
-        message: `版本信息检查失败: ${error.message}`,
-        solution: '请检查版本配置文件'
-      })
-    }
-
-    return { valid, issues }
-  }
-
-  // 检查系统兼容性
-  async checkSystemCompatibility() {
-    const compatibility = await systemIntegration.checkSystemCompatibility()
-    
-    const issues = []
-    let passed = true
-
-    if (!compatibility.wechatVersion) {
-      issues.push('微信版本兼容性问题')
-      passed = false
-    }
-
-    if (!compatibility.deviceSupport) {
-      issues.push('设备支持问题')
-      passed = false
-    }
-
-    if (!compatibility.networkSupport) {
-      issues.push('网络支持问题')
-      passed = false
-    }
-
-    return {
-      passed,
-      compatibility,
-      issues,
-      recommendations: compatibility.issues
-    }
-  }
-
-  // 检查性能指标
-  async checkPerformanceMetrics() {
-    const pageReport = performanceMonitor.getPagePerformanceReport()
-    const apiReport = performanceMonitor.getApiPerformanceReport()
-    const memoryReport = performanceMonitor.getMemoryUsageReport()
-
-    const issues = []
-    let passed = true
-
-    // 检查页面加载时间
-    for (const [route, data] of Object.entries(pageReport)) {
-      if (data.averageLoadTime > 3000) {
-        issues.push(`页面 ${route} 平均加载时间过长: ${data.averageLoadTime}ms`)
-        if (route === 'pages/index/index' && data.averageLoadTime > 3000) {
-          passed = false // 首页加载时间是关键指标
+      for (const page of requiredPages) {
+        if (!appConfig.pages.includes(page)) {
+          issues.push(`缺少必要页面: ${page}`)
         }
       }
-    }
 
-    // 检查API响应时间
-    for (const [url, data] of Object.entries(apiReport)) {
-      if (data.averageResponseTime > 2000) {
-        issues.push(`API ${url} 平均响应时间过长: ${data.averageResponseTime}ms`)
+      // 检查tabBar配置
+      if (!appConfig.tabBar || !appConfig.tabBar.list || appConfig.tabBar.list.length === 0) {
+        warnings.push('未配置tabBar，可能影响用户体验')
       }
-    }
 
-    // 检查内存使用
-    if (memoryReport && parseFloat(memoryReport.usageRate) > 80) {
-      issues.push(`内存使用率过高: ${memoryReport.usageRate}`)
-    }
+      // 检查window配置
+      if (!appConfig.window) {
+        warnings.push('未配置window，建议设置导航栏样式')
+      }
 
-    return {
-      passed,
-      pageReport,
-      apiReport,
-      memoryReport,
-      issues,
-      recommendations: issues.length > 0 ? ['优化页面加载性能', '优化API响应时间', '优化内存使用'] : []
+      if (issues.length > 0) {
+        throw new Error(`页面配置问题: ${issues.join(', ')}`)
+      }
+
+      return {
+        status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+        message: '页面配置检查完成',
+        warnings: warnings,
+        pageCount: appConfig.pages.length,
+        hasTabBar: !!appConfig.tabBar
+      }
+    } catch (error) {
+      throw new Error(`页面配置检查失败: ${error.message}`)
     }
   }
 
-  // 检查功能完整性
-  async checkFunctionality() {
-    const requiredFeatures = [
-      '用户认证',
-      '菜园管理',
-      '设备监控',
-      '服务预约',
-      '推广功能'
-    ]
-
+  // 资源文件检查
+  async checkResourceFiles() {
     const issues = []
-    let passed = true
+    const warnings = []
 
-    // 检查页面文件是否存在
-    const requiredPages = [
-      'pages/login/login',
-      'pages/gardens/gardens',
-      'pages/monitor/monitor',
-      'pages/services/services',
-      'pages/promotion/promotion'
+    // 检查关键工具文件
+    const requiredUtils = [
+      'utils/request.js',
+      'utils/errorHandler.js',
+      'utils/performance.js'
     ]
 
-    for (const page of requiredPages) {
+    for (const util of requiredUtils) {
       try {
-        // 这里应该检查页面文件是否存在，简化为模拟检查
-        console.log(`检查页面: ${page}`)
+        require(`../${util}`)
       } catch (error) {
-        issues.push(`页面文件缺失: ${page}`)
-        passed = false
+        issues.push(`缺少关键工具文件: ${util}`)
       }
     }
 
-    // 检查服务文件是否存在
+    // 检查服务文件
     const requiredServices = [
       'services/auth.js',
       'services/garden.js',
@@ -365,333 +258,308 @@ class DeploymentCheck {
 
     for (const service of requiredServices) {
       try {
-        // 这里应该检查服务文件是否存在，简化为模拟检查
-        console.log(`检查服务: ${service}`)
+        require(`../${service}`)
       } catch (error) {
-        issues.push(`服务文件缺失: ${service}`)
-        passed = false
+        issues.push(`缺少服务文件: ${service}`)
       }
     }
 
+    if (issues.length > 0) {
+      throw new Error(`资源文件问题: ${issues.join(', ')}`)
+    }
+
     return {
-      passed,
-      requiredFeatures,
-      issues,
-      recommendations: issues.length > 0 ? ['补充缺失的页面和服务文件'] : []
+      status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+      message: '资源文件检查完成',
+      warnings: warnings
     }
   }
 
-  // 检查错误处理
-  async checkErrorHandling() {
+  // 权限配置检查
+  async checkPermissions() {
     const issues = []
-    let passed = true
+    const warnings = []
 
     try {
-      // 测试全局错误处理是否正常工作
-      const errorTypes = [
-        'NETWORK_ERROR',
-        'BUSINESS_ERROR',
-        'VALIDATION_ERROR',
-        'PERFORMANCE_ERROR'
-      ]
-
-      for (const errorType of errorTypes) {
-        try {
-          errorHandler.handleNetworkError({ errMsg: 'request:fail timeout' })
-          errorHandler.handleBusinessError({ code: 'GARDEN_NOT_FOUND' })
-          errorHandler.handleValidationError('测试验证错误')
-          errorHandler.handlePerformanceError({ code: 'PAGE_LOAD_TIMEOUT' })
-        } catch (error) {
-          issues.push(`错误处理器异常: ${errorType}`)
-          passed = false
-        }
-      }
-
-    } catch (error) {
-      issues.push(`错误处理检查失败: ${error.message}`)
-      passed = false
-    }
-
-    return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['修复错误处理机制'] : []
-    }
-  }
-
-  // 检查安全性
-  async checkSecurity() {
-    const issues = []
-    let passed = true
-
-    // 检查敏感信息是否正确处理
-    const securityChecks = [
-      {
-        name: 'Token存储安全',
-        check: () => {
-          // 检查token是否安全存储（这里简化为模拟检查）
-          return true
-        }
-      },
-      {
-        name: 'API请求安全',
-        check: () => {
-          // 检查API请求是否包含必要的安全头
-          return true
-        }
-      },
-      {
-        name: '用户数据保护',
-        check: () => {
-          // 检查用户数据是否正确保护
-          return true
-        }
-      }
-    ]
-
-    for (const check of securityChecks) {
-      try {
-        const result = check.check()
-        if (!result) {
-          issues.push(`安全检查失败: ${check.name}`)
-          passed = false
-        }
-      } catch (error) {
-        issues.push(`安全检查异常: ${check.name} - ${error.message}`)
-        passed = false
-      }
-    }
-
-    return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['加强安全措施', '审查敏感数据处理'] : []
-    }
-  }
-
-  // 检查配置文件
-  async checkConfiguration() {
-    const issues = []
-    let passed = true
-
-    try {
-      // 检查app.json配置
-      const appConfig = {
-        pages: true, // 模拟检查
-        window: true,
-        tabBar: false, // 本项目不使用tabBar
-        networkTimeout: true
-      }
-
-      for (const [key, exists] of Object.entries(appConfig)) {
-        if (key !== 'tabBar' && !exists) {
-          issues.push(`app.json缺少必要配置: ${key}`)
-          passed = false
-        }
-      }
-
-      // 检查项目配置
-      const projectConfig = {
-        appid: true, // 模拟检查
-        projectname: true,
-        setting: true
-      }
-
-      for (const [key, exists] of Object.entries(projectConfig)) {
-        if (!exists) {
-          issues.push(`project.config.json缺少配置: ${key}`)
-        }
-      }
-
-    } catch (error) {
-      issues.push(`配置文件检查失败: ${error.message}`)
-      passed = false
-    }
-
-    return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['完善配置文件', '检查小程序配置'] : []
-    }
-  }
-
-  // 检查资源文件
-  async checkResources() {
-    const issues = []
-    let passed = true
-
-    // 检查必要的图片资源
-    const requiredImages = [
-      '/images/default-avatar.png',
-      '/images/garden-placeholder.png',
-      '/images/loading.gif'
-    ]
-
-    for (const image of requiredImages) {
-      try {
-        // 这里应该检查图片文件是否存在，简化为模拟检查
-        console.log(`检查图片资源: ${image}`)
-      } catch (error) {
-        issues.push(`图片资源缺失: ${image}`)
-        // 图片资源缺失不影响核心功能，只是警告
-      }
-    }
-
-    // 检查样式文件
-    const requiredStyles = [
-      'app.wxss'
-    ]
-
-    for (const style of requiredStyles) {
-      try {
-        // 这里应该检查样式文件是否存在，简化为模拟检查
-        console.log(`检查样式文件: ${style}`)
-      } catch (error) {
-        issues.push(`样式文件缺失: ${style}`)
-        passed = false
-      }
-    }
-
-    return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['补充缺失的资源文件'] : []
-    }
-  }
-
-  // 检查网络环境
-  async checkNetworkEnvironment() {
-    const issues = []
-    let passed = true
-
-    try {
-      // 检查网络连接
-      const networkStatus = await errorHandler.checkNetworkStatus()
+      // 检查app.json中的权限配置
+      const appConfig = require('../app.json')
       
-      if (!networkStatus.isConnected) {
-        issues.push('网络连接不可用')
-        passed = false
+      // 检查必要的权限
+      const requiredPermissions = [
+        'scope.userInfo',
+        'scope.camera',
+        'scope.writePhotosAlbum'
+      ]
+
+      // 这里只是检查配置，实际权限需要在运行时检查
+      if (!appConfig.permission) {
+        warnings.push('未配置权限说明，可能影响审核通过')
       }
 
-      if (networkStatus.isSlowNetwork) {
-        issues.push('网络速度较慢，可能影响用户体验')
+      return {
+        status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+        message: '权限配置检查完成',
+        warnings: warnings
       }
-
-      // 检查服务器连接（模拟）
-      try {
-        // 这里应该实际测试服务器连接
-        console.log('测试服务器连接...')
-      } catch (error) {
-        issues.push(`服务器连接失败: ${error.message}`)
-        passed = false
-      }
-
     } catch (error) {
-      issues.push(`网络环境检查失败: ${error.message}`)
-      passed = false
+      throw new Error(`权限配置检查失败: ${error.message}`)
+    }
+  }
+
+  // 性能配置检查
+  async checkPerformanceConfig() {
+    const app = getApp()
+    const issues = []
+    const warnings = []
+
+    // 检查性能相关配置
+    if (!app.globalData.performanceConfig) {
+      warnings.push('未配置性能监控参数')
+    }
+
+    // 检查缓存配置
+    if (!app.globalData.cacheTime || app.globalData.cacheTime < 60000) {
+      warnings.push('缓存时间过短，可能影响性能')
+    }
+
+    // 检查轮询间隔
+    if (!app.globalData.pollInterval || app.globalData.pollInterval < 3000) {
+      warnings.push('轮询间隔过短，可能影响性能和电量')
     }
 
     return {
-      passed,
-      issues,
-      recommendations: issues.length > 0 ? ['检查网络配置', '确认服务器状态'] : []
+      status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+      message: '性能配置检查完成',
+      warnings: warnings,
+      config: {
+        cacheTime: app.globalData.cacheTime,
+        pollInterval: app.globalData.pollInterval,
+        performanceMode: app.globalData.performanceMode
+      }
     }
   }
 
-  // 生成部署报告
-  generateDeploymentReport() {
-    const passedChecks = this.checkResults.filter(c => c.status === 'passed').length
-    const warningChecks = this.checkResults.filter(c => c.status === 'warning').length
-    const failedChecks = this.checkResults.filter(c => c.status === 'failed').length
-    const totalChecks = this.checkResults.length
+  // 安全配置检查
+  async checkSecurityConfig() {
+    const app = getApp()
+    const issues = []
+    const warnings = []
 
-    const report = {
-      summary: {
-        deploymentReady: this.deploymentReady,
-        total: totalChecks,
-        passed: passedChecks,
-        warnings: warningChecks,
-        failed: failedChecks,
-        successRate: totalChecks > 0 ? ((passedChecks / totalChecks) * 100).toFixed(1) : 0,
-        timestamp: new Date().toISOString()
-      },
-      details: this.checkResults,
-      recommendations: this.generateDeploymentRecommendations(),
-      nextSteps: this.generateNextSteps()
+    // 检查HTTPS使用
+    if (!app.globalData.baseUrl.startsWith('https://')) {
+      issues.push('生产环境必须使用HTTPS')
     }
 
-    console.log('部署准备检查报告:', report)
-    return report
+    // 检查开发模式
+    if (app.globalData.isDev === true) {
+      warnings.push('开发模式仍然开启，部署前需要关闭')
+    }
+
+    // 检查敏感信息
+    const sensitivePatterns = [
+      /password/i,
+      /secret/i,
+      /key/i,
+      /token/i
+    ]
+
+    // 这里可以添加更多的安全检查逻辑
+
+    if (issues.length > 0) {
+      throw new Error(`安全配置问题: ${issues.join(', ')}`)
+    }
+
+    return {
+      status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+      message: '安全配置检查完成',
+      warnings: warnings
+    }
   }
 
-  // 生成部署建议
-  generateDeploymentRecommendations() {
-    const recommendations = []
+  // 兼容性检查
+  async checkCompatibility() {
+    const issues = []
+    const warnings = []
+
+    try {
+      const systemInfo = wx.getSystemInfoSync()
+      
+      // 检查基础库版本兼容性
+      const sdkVersion = systemInfo.SDKVersion
+      if (this.compareVersion(sdkVersion, '2.30.0') < 0) {
+        issues.push(`基础库版本过低: ${sdkVersion}`)
+      }
+
+      // 检查屏幕适配
+      const screenWidth = systemInfo.screenWidth
+      if (screenWidth < 320) {
+        warnings.push('屏幕宽度过小，可能影响显示效果')
+      }
+
+      // 检查系统版本
+      const system = systemInfo.system
+      if (system.includes('iOS')) {
+        const iosVersion = parseFloat(system.match(/iOS (\d+\.\d+)/)?.[1] || '0')
+        if (iosVersion < 12.0) {
+          warnings.push(`iOS版本较低: ${iosVersion}，可能影响兼容性`)
+        }
+      } else if (system.includes('Android')) {
+        const androidVersion = parseFloat(system.match(/Android (\d+\.\d+)/)?.[1] || '0')
+        if (androidVersion < 7.0) {
+          warnings.push(`Android版本较低: ${androidVersion}，可能影响兼容性`)
+        }
+      }
+
+      if (issues.length > 0) {
+        throw new Error(`兼容性问题: ${issues.join(', ')}`)
+      }
+
+      return {
+        status: warnings.length > 0 ? 'WARNING' : 'PASSED',
+        message: '兼容性检查完成',
+        warnings: warnings,
+        systemInfo: {
+          platform: systemInfo.platform,
+          system: systemInfo.system,
+          version: systemInfo.version,
+          SDKVersion: systemInfo.SDKVersion,
+          screenWidth: systemInfo.screenWidth,
+          screenHeight: systemInfo.screenHeight
+        }
+      }
+    } catch (error) {
+      throw new Error(`兼容性检查失败: ${error.message}`)
+    }
+  }
+
+  // 辅助方法：发送请求
+  async makeRequest(url, options = {}) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url,
+        method: options.method || 'GET',
+        data: options.data,
+        header: options.header,
+        timeout: options.timeout || 10000,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            resolve(res.data)
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}`))
+          }
+        },
+        fail: (err) => {
+          reject(new Error(err.errMsg || 'Request failed'))
+        }
+      })
+    })
+  }
+
+  // 版本比较
+  compareVersion(v1, v2) {
+    const arr1 = v1.split('.')
+    const arr2 = v2.split('.')
+    const length = Math.max(arr1.length, arr2.length)
     
-    const failedChecks = this.checkResults.filter(c => c.status === 'failed')
-    const warningChecks = this.checkResults.filter(c => c.status === 'warning')
-
-    if (failedChecks.length > 0) {
-      recommendations.push({
-        priority: 'high',
-        type: 'error',
-        message: `有 ${failedChecks.length} 个关键检查失败，必须修复后才能部署`,
-        actions: failedChecks.map(c => `修复 ${c.name}`)
-      })
+    for (let i = 0; i < length; i++) {
+      const num1 = parseInt(arr1[i] || '0')
+      const num2 = parseInt(arr2[i] || '0')
+      
+      if (num1 > num2) return 1
+      if (num1 < num2) return -1
     }
-
-    if (warningChecks.length > 0) {
-      recommendations.push({
-        priority: 'medium',
-        type: 'warning',
-        message: `有 ${warningChecks.length} 个检查有警告，建议优化`,
-        actions: warningChecks.map(c => `优化 ${c.name}`)
-      })
-    }
-
-    if (this.deploymentReady) {
-      recommendations.push({
-        priority: 'low',
-        type: 'success',
-        message: '所有检查通过，可以进行部署',
-        actions: [
-          '准备生产环境配置',
-          '执行最终测试',
-          '准备发布流程'
-        ]
-      })
-    }
-
-    return recommendations
+    
+    return 0
   }
 
-  // 生成下一步操作
-  generateNextSteps() {
-    if (this.deploymentReady) {
-      return [
-        '1. 配置生产环境参数',
-        '2. 上传代码到微信开发者工具',
-        '3. 提交审核',
-        '4. 准备发布计划',
-        '5. 监控上线后的运行状态'
-      ]
-    } else {
-      return [
-        '1. 修复所有失败的检查项',
-        '2. 优化警告项',
-        '3. 重新运行部署检查',
-        '4. 确认所有问题已解决',
-        '5. 再次执行部署准备流程'
-      ]
+  // 生成部署清单
+  generateDeploymentChecklist() {
+    const checklist = [
+      {
+        category: '环境配置',
+        items: [
+          { task: '将isDev设置为false', checked: false },
+          { task: '更新baseUrl为生产环境地址', checked: false },
+          { task: '配置HTTPS证书', checked: false },
+          { task: '设置正确的微信AppID', checked: false }
+        ]
+      },
+      {
+        category: '代码优化',
+        items: [
+          { task: '移除调试代码和console.log', checked: false },
+          { task: '压缩图片资源', checked: false },
+          { task: '优化代码结构', checked: false },
+          { task: '检查内存泄漏', checked: false }
+        ]
+      },
+      {
+        category: '功能测试',
+        items: [
+          { task: '完成所有功能测试', checked: false },
+          { task: '验证错误处理机制', checked: false },
+          { task: '测试网络异常情况', checked: false },
+          { task: '验证性能指标', checked: false }
+        ]
+      },
+      {
+        category: '安全检查',
+        items: [
+          { task: '检查敏感信息泄露', checked: false },
+          { task: '验证输入验证机制', checked: false },
+          { task: '确认权限配置正确', checked: false },
+          { task: '测试安全漏洞', checked: false }
+        ]
+      },
+      {
+        category: '微信平台配置',
+        items: [
+          { task: '配置服务器域名白名单', checked: false },
+          { task: '设置业务域名', checked: false },
+          { task: '配置支付参数（如需要）', checked: false },
+          { task: '设置客服消息', checked: false }
+        ]
+      }
+    ]
+
+    return checklist
+  }
+
+  // 获取检查报告
+  getCheckReport() {
+    return {
+      results: this.checkResults,
+      summary: this.generateSummary(),
+      checklist: this.generateDeploymentChecklist(),
+      timestamp: new Date().toISOString()
+    }
+  }
+
+  // 生成检查摘要
+  generateSummary() {
+    const total = this.checkResults.length
+    const passed = this.checkResults.filter(r => r.status === 'PASSED').length
+    const warnings = this.checkResults.filter(r => r.status === 'WARNING').length
+    const failed = this.checkResults.filter(r => r.status === 'FAILED').length
+
+    return {
+      total,
+      passed,
+      warnings,
+      failed,
+      readyForDeployment: failed === 0,
+      score: total > 0 ? Math.round((passed / total) * 100) : 0
     }
   }
 
   // 清理检查数据
-  clearCheckData() {
+  cleanup() {
     this.checkResults = []
-    this.deploymentReady = false
-    console.log('部署检查数据已清理')
+    console.log('检查数据已清理')
   }
 }
 
-module.exports = new DeploymentCheck()
+// 创建全局实例
+const deploymentCheck = new DeploymentCheck()
+
+module.exports = deploymentCheck

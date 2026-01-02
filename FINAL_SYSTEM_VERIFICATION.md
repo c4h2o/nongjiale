@@ -249,7 +249,9 @@ backend/
 - [x] 需求文档
 - [x] 设计文档
 - [x] API接口文档
-- [x] 部署指南
+- [x] 部署指南 (DEPLOYMENT_GUIDE.md)
+- [x] 本地测试指南 (LOCAL_TESTING_GUIDE.md)
+- [x] 性能优化总结 (PERFORMANCE_OPTIMIZATION_SUMMARY.md)
 - [x] 用户手册
 
 ### 测试报告 ✅
